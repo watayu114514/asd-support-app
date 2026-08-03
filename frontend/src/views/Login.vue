@@ -27,14 +27,6 @@ const login = async () => {
     password.value
     )
 
-    console.log('auth token:', auth.token)
-    console.log(
-    'storage token:',
-    localStorage.getItem('token')
-    )
-
-    console.log('user:', auth.user)
-
     router.push('/')
 
 

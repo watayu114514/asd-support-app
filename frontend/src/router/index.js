@@ -6,6 +6,8 @@ import Home from '../views/Home.vue'
 import Profile from '../views/Profile.vue'
 import Difficulties from '../views/Difficulties.vue'
 import DifficultyCreate from '../views/DifficultyCreate.vue'
+import IssueRecords from '../views/IssueRecords.vue'
+import DifficultyDetail from '../views/DifficultyDetail.vue'
 import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
@@ -55,6 +57,29 @@ const router = createRouter({
       path: '/difficulties/create',
       name: 'difficulty-create',
       component: DifficultyCreate,
+      meta: {
+        requiresAuth: true
+      }
+    },
+
+    {
+      path:'/issue-records',
+      component: IssueRecords
+    },
+
+    {
+      path: '/difficulties/:id/edit',
+      name: 'difficulty-edit',
+      component: () => import('../views/DifficultyEdit.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/difficulties/:id',
+      name: 'difficulty-detail',
+      component: DifficultyDetail,
       meta: {
         requiresAuth: true
       }

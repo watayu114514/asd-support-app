@@ -22,7 +22,8 @@ const fetchDifficulties = async () => {
 
   } catch (e) {
 
-    error.value = '困りごとの取得に失敗しました'
+    console.log(e.response)
+    error.value = e.message
 
   }
 
@@ -35,6 +36,11 @@ const createDifficulty = () => {
 
 }
 
+const showDifficulty = (id) => {
+
+  router.push(`/difficulties/${id}`)
+
+}
 
 const formatDate = (date) => {
 
@@ -118,6 +124,11 @@ onMounted(() => {
 {{ formatDate(item.occurred_at) }}
 </p>
 
+<button
+  @click="showDifficulty(item.id)"
+>
+  詳細
+</button>
 
 <hr>
 

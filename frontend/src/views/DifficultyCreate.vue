@@ -4,33 +4,33 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api/axios'
 
+
 const router = useRouter()
 
-const title = ref('')
-const situation = ref('')
-const feeling = ref('')
-const severity = ref(3)
-const occurred_at = ref(
-  new Date().toISOString().split('T')[0]
-)
+
+const form = ref({
+  title: '',
+  situation: '',
+  feeling: '',
+  severity: 1,
+  occurred_at: ''
+})
+
 
 const error = ref('')
 
-const save = async () => {
+
+const submit = async () => {
 
   try {
 
-    await api.post('/difficulties', {
-      title: title.value,
-      situation: situation.value,
-      feeling: feeling.value,
-      severity: severity.value,
-      occurred_at: occurred_at.value
-    })
+    await api.post('/difficulties', form.value)
 
     router.push('/difficulties')
 
   } catch (e) {
+
+    console.log(e)
 
     error.value = '登録に失敗しました'
 
@@ -38,54 +38,73 @@ const save = async () => {
 
 }
 
+
 </script>
+
 
 <template>
 
 <div>
 
-<h1>困りごと登録</h1>
+<h1>
+困りごと登録
+</h1>
+
 
 <p v-if="error">
-  {{ error }}
+{{ error }}
 </p>
 
+
 <div>
 
-<label>タイトル</label>
+<label>
+タイトル
+</label>
 
 <input
-  v-model="title"
-  type="text"
+v-model="form.title"
 />
+
 
 </div>
 
+
 <div>
 
-<label>状況</label>
+<label>
+状況
+</label>
 
 <textarea
-  v-model="situation"
+v-model="form.situation"
 />
+
 
 </div>
 
+
 <div>
 
-<label>気持ち</label>
+<label>
+感じたこと
+</label>
 
 <textarea
-  v-model="feeling"
+v-model="form.feeling"
 />
+
 
 </div>
 
+
 <div>
 
-<label>困難度</label>
+<label>
+困りごとの大きさ
+</label>
 
-<select v-model="severity">
+<select v-model="form.severity">
 
 <option :value="1">★</option>
 <option :value="2">★★</option>
@@ -97,24 +116,34 @@ const save = async () => {
 
 </div>
 
+
 <div>
 
-<label>発生日</label>
+<label>
+発生日時
+</label>
 
 <input
-  v-model="occurred_at"
-  type="date"
+type="datetime-local"
+v-model="form.occurred_at"
 />
 
 </div>
 
-<br>
 
-<button @click="save">
-
+<button
+@click="submit"
+>
 登録
-
 </button>
+
+
+<button
+@click="router.push('/difficulties')"
+>
+戻る
+</button>
+
 
 </div>
 

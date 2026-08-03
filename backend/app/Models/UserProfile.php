@@ -11,15 +11,17 @@ class UserProfile extends Model
         'user_id',
         'age',
         'occupation',
-        'asd_diagnosis',
+        'diagnosis_status',
         'diagnosis_date',
+        'strengths',
+        'weaknesses',
         'difficulty_note',
+        'memo',
     ];
 
     protected function casts(): array
     {
         return [
-            'asd_diagnosis' => 'boolean',
             'diagnosis_date' => 'date',
         ];
     }

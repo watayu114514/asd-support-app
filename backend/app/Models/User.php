@@ -11,6 +11,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\DifficultyRecord;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -36,7 +38,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserProfile::class);
     }
-    
+
+    public function issueRecords(): HasMany
+    {
+        return $this->hasMany(IssueRecord::class);
+    }
+
     public function difficultyRecords()
     {
         return $this->hasMany(DifficultyRecord::class);

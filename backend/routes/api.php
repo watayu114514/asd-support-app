@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\DifficultyRecordController;
 use App\Http\Controllers\DifficultyStatisticsController;
+use App\Http\Controllers\Api\IssueRecordController;
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -44,4 +45,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/difficulties/{id}', [DifficultyRecordController::class, 'update']);
     Route::delete('/difficulties/{id}', [DifficultyRecordController::class, 'destroy']);
 
+    // 新規：困りごと記録
+    Route::post('/issue-records', [IssueRecordController::class, 'store']);
+
+    Route::get('/issue-records', [IssueRecordController::class, 'index']);
+
+    Route::get(
+        '/issue-records/{id}',
+        [IssueRecordController::class, 'show']
+    );
+
+    Route::put(
+        '/issue-records/{id}',
+        [IssueRecordController::class, 'update']
+    );
+
+    Route::delete(
+        '/issue-records/{id}',
+        [IssueRecordController::class, 'destroy']
+    );
 });

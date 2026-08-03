@@ -12,35 +12,50 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_profiles', function (Blueprint $table) {
-            $table->id();
+    $table->id();
 
-            // usersテーブルとの紐付け
-            $table->foreignId('user_id')
-                ->constrained()
-                ->cascadeOnDelete();
+    $table->foreignId('user_id')
+        ->constrained()
+        ->cascadeOnDelete();
 
-            // 年齢
-            $table->unsignedInteger('age')
-                ->nullable();
+    // 基本情報
+    $table->unsignedInteger('age')
+        ->nullable()
+        ->comment('年齢');
 
-            // 職業
-            $table->string('occupation', 100)
-                ->nullable();
+    $table->string('occupation', 100)
+        ->nullable()
+        ->comment('職業');
 
-            // ASD診断有無
-            $table->boolean('asd_diagnosis')
-                ->default(false);
+    // 診断情報
+    $table->unsignedTinyInteger('diagnosis_status')
+        ->default(0)
+        ->comment('診断状況');
 
-            // 診断日
-            $table->date('diagnosis_date')
-                ->nullable();
+    $table->date('diagnosis_date')
+        ->nullable()
+        ->comment('診断日');
 
-            // 困りごとメモ
-            $table->text('difficulty_note')
-                ->nullable();
+    // ASD特性
+    $table->text('strengths')
+        ->nullable()
+        ->comment('得意なこと');
 
-            $table->timestamps();
-        });
+    $table->text('weaknesses')
+        ->nullable()
+        ->comment('苦手なこと');
+
+    // メモ
+    $table->text('difficulty_note')
+        ->nullable()
+        ->comment('困りごとメモ');
+
+    $table->text('memo')
+        ->nullable()
+        ->comment('その他メモ');
+
+    $table->timestamps();
+});
     }
 
     /**

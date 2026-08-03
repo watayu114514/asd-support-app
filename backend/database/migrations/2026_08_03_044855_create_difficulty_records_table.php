@@ -9,33 +9,33 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('difficulty_records', function (Blueprint $table) {
+
             $table->id();
 
-            // ユーザーID
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            // 困りごとのタイトル
-            $table->string('title', 100);
+            $table->string('title', 100)
+                ->comment('タイトル');
 
-            // 状況
             $table->text('situation')
-                ->nullable();
+                ->comment('状況');
 
-            // 感じたこと
             $table->text('feeling')
-                ->nullable();
+                ->nullable()
+                ->comment('感じたこと');
 
-            // つらさレベル 1〜5
             $table->unsignedTinyInteger('severity')
-                ->nullable();
+                ->default(1)
+                ->comment('困りごとの大きさ');
 
-            // 発生日時
-            $table->date('occurred_at')
-                ->nullable();
+            $table->timestamp('occurred_at')
+                ->nullable()
+                ->comment('発生日時');
 
             $table->timestamps();
+
         });
     }
 
