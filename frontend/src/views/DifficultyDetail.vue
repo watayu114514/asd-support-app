@@ -130,6 +130,8 @@ const deleteDifficulty = async () => {
 
     console.error(e)
 
+    alert('削除に失敗しました')
+    
   }
 
 }

@@ -13,6 +13,8 @@ const user = ref(null)
 
 const difficultyCount = ref(0)
 
+const recentDifficulties = ref([])
+
 const aiAdvice = ref('')
 
 
@@ -228,8 +230,11 @@ const load = async () => {
     const difficultyRes =
       await api.get('/difficulties')
 
+    recentDifficulties.value =
+          difficultyRes.data.data.slice(0,3)
+
     difficultyCount.value =
-      difficultyRes.data.data.length
+          difficultyRes.data.data.length
 
     const statisticsRes =
       await api.get('/difficulties/statistics')
@@ -246,6 +251,15 @@ const load = async () => {
     console.error(e)
 
   }
+}
+
+const formatDate = (date) => {
+
+  if (!date) {
+    return ''
+  }
+
+  return new Date(date).toLocaleString('ja-JP')
 }
 
 onMounted(load)
@@ -319,6 +333,40 @@ rounded="xl"
 
 </v-card>
 
+
+<v-card
+  class="mt-5 pa-5"
+  rounded="xl"
+>
+
+<div class="text-h6">
+  最近の困りごと
+</div>
+
+
+<v-list>
+
+<v-list-item
+  v-for="item in recentDifficulties"
+  :key="item.id"
+  @click="router.push(`/difficulties/${item.id}`)"
+>
+
+<v-list-item-title>
+{{ item.title }}
+</v-list-item-title>
+
+
+<v-list-item-subtitle>
+{{ formatDate(item.created_at) }}
+</v-list-item-subtitle>
+
+
+</v-list-item>
+
+</v-list>
+
+</v-card>
 
 
 
