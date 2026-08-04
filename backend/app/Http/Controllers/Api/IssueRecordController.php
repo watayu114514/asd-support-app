@@ -26,24 +26,26 @@ class IssueRecordController extends Controller
             ],
 
             'occurred_at' => [
-                'nullable',
+                'required',
                 'date',
             ],
 
             'title' => [
                 'required',
                 'string',
-                'max:150',
+                'max:50',
             ],
 
             'situation' => [
-                'nullable',
+                'required',
                 'string',
+                'max:500',
             ],
 
             'feeling' => [
                 'nullable',
                 'string',
+                'max:500',
             ],
 
             'cause' => [
@@ -75,7 +77,7 @@ class IssueRecordController extends Controller
             ],
 
             'severity' => [
-                'nullable',
+                'required',
                 'integer',
                 'between:1,5',
             ],
@@ -91,6 +93,7 @@ class IssueRecordController extends Controller
 
             $issueRecord = IssueRecord::create([
                 ...$validated,
+                'occurred_at' => date('Y-m-d H:i:s', strtotime($validated['occurred_at'])),
                 'user_id' => auth()->id(),
                 'is_resolved' => false,
             ]);
@@ -162,14 +165,14 @@ class IssueRecordController extends Controller
             ],
 
             'occurred_at' => [
-                'nullable',
+                'required',
                 'date',
             ],
 
             'title' => [
                 'required',
                 'string',
-                'max:150',
+                'max:50',
             ],
 
             'situation' => [

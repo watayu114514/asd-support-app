@@ -18,12 +18,24 @@ const fetchProfile = async () => {
 
   } catch (e) {
 
+    console.log('PROFILE API ERROR', e)
+
     error.value = 'プロフィール取得に失敗しました'
 
   }
 
 }
 
+const formatDate = (date) => {
+
+  if (!date) {
+    return ''
+  }
+
+  return new Date(date)
+    .toLocaleDateString('ja-JP')
+
+}
 
 onMounted(() => {
 
@@ -38,55 +50,146 @@ onMounted(() => {
 
 <template>
 
-<div>
-
-  <h1>
-    プロフィール
-  </h1>
+<v-container class="py-8">
 
 
-  <p v-if="error">
-    {{ error }}
-  </p>
+  <v-card
+    v-if="profile"
+    class="mx-auto"
+    max-width="600"
+    rounded="xl"
+    elevation="3"
+  >
+
+
+    <v-card-title class="text-h5">
+      👤 プロフィール
+    </v-card-title>
+
+
+    <v-card-text>
+
+
+      <v-list>
+
+
+        <v-list-item>
+          <v-list-item-title>
+            年齢
+          </v-list-item-title>
+
+          <v-list-item-subtitle>
+            {{ profile.age ?? '未設定' }}
+          </v-list-item-subtitle>
+        </v-list-item>
 
 
 
-  <div v-if="profile">
+        <v-divider />
 
 
-    <p>
-      年齢:
-      {{ profile.age }}
-    </p>
+        <v-list-item>
+          <v-list-item-title>
+            職業
+          </v-list-item-title>
+
+          <v-list-item-subtitle>
+            {{ profile.occupation || '未設定' }}
+          </v-list-item-subtitle>
+        </v-list-item>
 
 
-    <p>
-      職業:
-      {{ profile.occupation }}
-    </p>
+
+        <v-divider />
 
 
-    <p>
-      ASD診断:
-      {{ profile.asd_diagnosis ? 'あり' : 'なし' }}
-    </p>
+
+        <v-list-item>
+          <v-list-item-title>
+            ASD診断
+          </v-list-item-title>
+
+          <v-list-item-subtitle>
+
+            <v-chip
+              :color="profile.diagnosis_status ? 'primary' : 'grey'"
+              variant="tonal"
+            >
+              {{ profile.diagnosis_status ? 'あり' : 'なし' }}
+            </v-chip>
+
+          </v-list-item-subtitle>
+
+        </v-list-item>
 
 
-    <p>
-      診断日:
-      {{ profile.diagnosis_date }}
-    </p>
+
+        <v-divider />
 
 
-    <p>
-      困りごと:
-      {{ profile.difficulty_note }}
-    </p>
+
+        <v-list-item>
+          <v-list-item-title>
+            診断日
+          </v-list-item-title>
+
+          <v-list-item-subtitle>
+            {{ formatDate(profile.diagnosis_date) || '未設定' }}
+          </v-list-item-subtitle>
+
+        </v-list-item>
 
 
-  </div>
+
+        <v-divider />
 
 
-</div>
+
+        <v-list-item>
+
+          <v-list-item-title>
+            困りごとメモ
+          </v-list-item-title>
+
+
+          <v-list-item-subtitle class="mt-2">
+
+            {{ profile.difficulty_note || '未設定' }}
+
+          </v-list-item-subtitle>
+
+
+        </v-list-item>
+
+
+      </v-list>
+
+
+    </v-card-text>
+
+
+
+    <v-card-actions
+      class="justify-center pb-6"
+    >
+
+      <v-btn
+        color="primary"
+        variant="flat"
+        size="large"
+        @click="$router.push('/profile/edit')"
+      >
+        ✏ 編集する
+      </v-btn>
+
+
+    </v-card-actions>
+
+
+  </v-card>
+
+
+</v-container>
+
 
 </template>

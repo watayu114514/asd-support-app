@@ -1,93 +1,20 @@
-<template>
-  <div class="container mt-4">
-
-    <h2>困りごと詳細</h2>
-
-    <div v-if="loading">
-      読み込み中...
-    </div>
-
-    <div v-else-if="difficulty">
-
-      <div class="card">
-        <div class="card-body">
-
-          <h4>
-            {{ difficulty.title }}
-            </h4>
-
-            <hr>
-
-            <p>
-            状況：
-            {{ difficulty.situation }}
-            </p>
-
-            <p v-if="difficulty.feeling">
-            気持ち：
-            {{ difficulty.feeling }}
-            </p>
-
-            <p>
-            困難度：
-            {{ '★'.repeat(difficulty.severity) }}
-            </p>
-
-            <p>
-            発生日：
-            {{ formatDate(difficulty.occurred_at) }}
-            </p>
-          <hr>
-
-          <small>
-            作成日：{{ formatDate(difficulty.created_at) }}
-          </small>
-
-        </div>
-      </div>
-
-      <div class="mt-3">
-
-        <RouterLink
-          to="/difficulties"
-          class="btn btn-secondary me-2"
-        >
-          一覧へ戻る
-        </RouterLink>
-
-        <button
-          class="btn btn-warning me-2"
-          @click="router.push(`/difficulties/${difficulty.id}/edit`)"
-        >
-          編集
-        </button>
-
-        <button
-          class="btn btn-danger"
-          @click="deleteDifficulty"
-        >
-          削除
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-</template>
-
 <script setup>
+
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api/axios'
 
+
 const route = useRoute()
 const router = useRouter()
 
+
 const loading = ref(true)
+
 const difficulty = ref(null)
 
-onMounted(async () => {
+
+const fetchDifficulty = async () => {
 
   try {
 
@@ -107,7 +34,15 @@ onMounted(async () => {
 
   }
 
+}
+
+
+onMounted(() => {
+
+  fetchDifficulty()
+
 })
+
 
 const deleteDifficulty = async () => {
 
@@ -131,10 +66,11 @@ const deleteDifficulty = async () => {
     console.error(e)
 
     alert('削除に失敗しました')
-    
+
   }
 
 }
+
 
 const formatDate = (date) => {
 
@@ -146,4 +82,238 @@ const formatDate = (date) => {
     .toLocaleString('ja-JP')
 
 }
+
+
+const severityLabel = (severity) => {
+
+  const labels = {
+    1: '少し困った',
+    2: '軽い負担',
+    3: '困った',
+    4: 'かなり困った',
+    5: '非常につらい'
+  }
+
+
+  return labels[severity] ?? ''
+
+}
+
+
+const severityColor = (severity) => {
+
+  if (severity >= 5) {
+    return 'danger'
+  }
+
+  if (severity >= 4) {
+    return 'warning'
+  }
+
+  if (severity >= 3) {
+    return 'info'
+  }
+
+  return 'success'
+
+}
+
 </script>
+
+
+<template>
+
+<div class="container mt-4">
+
+
+<h2 class="mb-4">
+📝 困りごと詳細
+</h2>
+
+
+<div v-if="loading">
+
+読み込み中...
+
+</div>
+
+
+<div v-else-if="difficulty">
+
+
+<!-- メインカード -->
+
+<div class="card shadow-sm mb-4">
+
+<div class="card-body">
+
+
+<div class="mb-3">
+
+<span class="badge bg-primary">
+
+📂 {{ difficulty.category?.name }}
+
+</span>
+
+</div>
+
+
+<h3 class="mb-3">
+
+{{ difficulty.title }}
+
+</h3>
+
+
+<div class="mb-4">
+
+<span
+class="badge"
+:class="`bg-${severityColor(difficulty.severity)}`"
+>
+
+{{ '★'.repeat(difficulty.severity) }}
+
+</span>
+
+
+<span class="ms-2">
+
+{{ severityLabel(difficulty.severity) }}
+
+</span>
+
+
+</div>
+
+
+
+<hr>
+
+
+
+<div class="card mb-3">
+
+<div class="card-body">
+
+<h5>
+📝 状況
+</h5>
+
+<p class="mb-0">
+
+{{ difficulty.situation }}
+
+</p>
+
+</div>
+
+</div>
+
+
+
+<div
+v-if="difficulty.feeling"
+class="card mb-3"
+>
+
+<div class="card-body">
+
+<h5>
+💭 気持ち
+</h5>
+
+
+<p class="mb-0">
+
+{{ difficulty.feeling }}
+
+</p>
+
+
+</div>
+
+</div>
+
+
+
+<div class="text-muted small mt-4">
+
+登録日：
+{{ formatDate(difficulty.created_at) }}
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+<div class="d-flex justify-center ga-3 mt-5">
+
+
+<v-btn
+
+color="primary"
+
+variant="elevated"
+
+prepend-icon="mdi-pencil"
+
+@click="router.push(`/difficulties/${difficulty.id}/edit`)"
+
+>
+
+編集する
+
+</v-btn>
+
+
+
+<v-btn
+
+color="secondary"
+
+variant="tonal"
+
+prepend-icon="mdi-arrow-left"
+
+@click="router.push('/difficulties')"
+
+>
+
+一覧へ戻る
+
+</v-btn>
+
+
+
+<v-btn
+
+color="error"
+
+variant="tonal"
+
+prepend-icon="mdi-delete"
+
+@click="deleteDifficulty"
+
+>
+
+削除
+
+</v-btn>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+</template>

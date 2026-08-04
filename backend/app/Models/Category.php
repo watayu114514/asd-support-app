@@ -3,17 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
+
     protected $fillable = [
         'name',
         'sort',
     ];
 
-    public function issueRecords(): HasMany
+
+    public function difficultyRecords()
     {
-        return $this->hasMany(IssueRecord::class);
+        return $this->hasMany(
+            DifficultyRecord::class
+        );
     }
+
 }

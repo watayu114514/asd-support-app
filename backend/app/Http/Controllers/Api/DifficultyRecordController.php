@@ -13,17 +13,95 @@ class DifficultyRecordController extends Controller
      */
     public function index(Request $request)
     {
-        $records = $request->user()
-            ->difficultyRecords()
-            ->latest()
-            ->get();
+
+        $query = $request->user()
+            ->difficultyRecords();
+
+        // 並び替え
+        switch ($request->sort) {
+            case 'oldest':
+                $query->orderBy('occurred_at', 'asc')
+                ->orderBy('created_at', 'desc');
+                break;
+
+            case 'severity_desc':
+                $query->orderBy('severity', 'desc');
+                break;
+
+            case 'severity_asc':
+                $query->orderBy('severity', 'asc');
+                break;
+
+            default:
+                $query->orderBy('occurred_at', 'desc')
+                ->orderBy('created_at', 'desc');
+                break;
+        }
+
+        // キーワード検索
+        if ($request->filled('keyword')) {
+
+            $keyword = $request->keyword;
+
+            $query->where(function ($q) use ($keyword) {
+
+                $q->where('title', 'like', "%{$keyword}%")
+                ->orWhere('situation', 'like', "%{$keyword}%");
+
+            });
+
+        }
+
+        // 困難度フィルター
+        if ($request->filled('severity')) {
+
+            $query->where(
+                'severity',
+                '>=',
+                $request->severity
+            );
+
+        }
+
+        //  カテゴリ
+        if ($request->filled('category_id')) {
+
+            $query->where(
+                'category_id',
+                $request->category_id
+            );
+
+        }
+
+        // 発生日時期間フィルター
+        if ($request->filled('from')) {
+
+            $query->where(
+                'occurred_at',
+                '>=',
+                $request->from . ' 00:00:00'
+            );
+
+        }
+
+
+        if ($request->filled('to')) {
+
+            $query->where(
+                'occurred_at',
+                '<=',
+                $request->to . ' 23:59:59'
+            );
+
+        }
+
+        $records = $query->with('category')->get();
 
         return response()->json([
             'success' => true,
             'data' => $records
         ]);
     }
-
 
     /**
      * 詳細取得
@@ -36,7 +114,7 @@ class DifficultyRecordController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $record
+            'data' => $record->load('category')
         ]);
     }
 
@@ -47,15 +125,24 @@ class DifficultyRecordController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'category_id' => [
+                'required',
+                'exists:categories,id',
+            ],
             'title' => [
                 'required',
-                'max:100'
+                'string',
+                'max:50',
             ],
             'situation' => [
-                'required'
+                'required',
+                'string',
+                'max:500',
             ],
             'feeling' => [
-                'nullable'
+                'nullable',
+                'string',
+                'max:500',
             ],
             'severity' => [
                 'required',
@@ -63,11 +150,10 @@ class DifficultyRecordController extends Controller
                 'between:1,5'
             ],
             'occurred_at' => [
-                'nullable',
+                'required',
                 'date'
             ],
         ]);
-
 
         $record = $request->user()
             ->difficultyRecords()
@@ -76,7 +162,7 @@ class DifficultyRecordController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $record
+            'data' => $record->load('category')
         ]);
     }
 
@@ -92,6 +178,10 @@ class DifficultyRecordController extends Controller
 
 
         $validated = $request->validate([
+            'category_id' => [
+                'required',
+                'exists:categories,id',
+            ],
             'title' => [
                 'required',
                 'max:100'

@@ -13,6 +13,8 @@ const user = ref(null)
 
 const difficultyCount = ref(0)
 
+const monthlyDifficultyCount = ref(0)
+
 const recentDifficulties = ref([])
 
 const aiAdvice = ref('')
@@ -61,8 +63,6 @@ const statistics = ref({
   timeGraph: []
 
 })
-
-
 
 
 // ======================
@@ -231,10 +231,30 @@ const load = async () => {
       await api.get('/difficulties')
 
     recentDifficulties.value =
-          difficultyRes.data.data.slice(0,3)
+          difficultyRes.data.data.slice(0,5)
+
+    const difficulties =
+      difficultyRes.data.data
+
 
     difficultyCount.value =
-          difficultyRes.data.data.length
+          difficulties.length
+
+
+    const now = new Date()
+
+    const thisMonth =
+          now.getFullYear() +
+          '-' +
+          String(now.getMonth() + 1).padStart(2,'0')
+
+
+    monthlyDifficultyCount.value =
+          difficulties.filter(item => {
+
+            return item.occurred_at.startsWith(thisMonth)
+
+          }).length
 
     const statisticsRes =
       await api.get('/difficulties/statistics')
@@ -299,7 +319,7 @@ onMounted(load)
 
 
 
-<!-- 今日の記録 -->
+<!-- 記録状況 -->
 
 <v-card
 
@@ -312,21 +332,31 @@ rounded="xl"
 
 <div class="text-h6">
 
-📊 今日の記録
+📊 記録状況
 
 </div>
 
 
-<div class="text-h3 mt-3">
+<div class="mt-3">
 
+<p>
+全期間：
+<strong class="text-h4">
 {{ difficultyCount }}
+</strong>
+件
+</p>
 
-<span class="text-h5">
 
+<p class="mt-3">
+
+今月：
+<strong class="text-h4">
+{{ monthlyDifficultyCount }}
+</strong>
 件
 
-</span>
-
+</p>
 
 </div>
 
@@ -352,19 +382,53 @@ rounded="xl"
   @click="router.push(`/difficulties/${item.id}`)"
 >
 
+
 <v-list-item-title>
+
 {{ item.title }}
+
+
+<v-chip
+  size="small"
+  color="error"
+  class="ml-2"
+>
+  {{ '★'.repeat(item.severity) }}
+</v-chip>
+
+
 </v-list-item-title>
 
 
+
 <v-list-item-subtitle>
-{{ formatDate(item.created_at) }}
+
+発生日：
+{{ formatDate(item.occurred_at) }}
+
 </v-list-item-subtitle>
 
 
 </v-list-item>
 
 </v-list>
+
+
+<v-btn
+
+block
+
+class="mt-3"
+
+variant="outlined"
+
+@click="router.push('/difficulties')"
+
+>
+
+すべて見る
+
+</v-btn>
 
 </v-card>
 

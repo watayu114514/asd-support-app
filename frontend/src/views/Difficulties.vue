@@ -9,7 +9,7 @@ const router = useRouter()
 
 const difficulties = ref([])
 
-const error = ref('')
+const error = ref({})
 
 const keyword = ref('')
 
@@ -19,6 +19,9 @@ const sort = ref('latest')
 
 const fromDate = ref('')
 const toDate = ref('')
+
+const categories = ref([])
+const categoryId = ref('')
 
 const fetchDifficulties = async () => {
 
@@ -30,7 +33,8 @@ const fetchDifficulties = async () => {
         severity: severity.value,
         sort: sort.value,
         from: fromDate.value,
-        to: toDate.value
+        to: toDate.value,
+        category_id: categoryId.value
       }
     })
 
@@ -56,6 +60,8 @@ const resetSearch = () => {
   fromDate.value = ''
 
   toDate.value = ''
+
+  categoryId.value = ''
 
   fetchDifficulties()
 
@@ -84,9 +90,43 @@ const formatDate = (date) => {
 
 }
 
+const difficultyColor = (severity) => {
+
+  if (severity >= 5) {
+    return 'error'
+  }
+
+  if (severity >= 4) {
+    return 'warning'
+  }
+
+  if (severity >= 3) {
+    return 'info'
+  }
+
+  return 'success'
+
+}
+
+const fetchCategories = async () => {
+
+  try {
+
+    const res = await api.get('/categories')
+
+    categories.value = res.data.data
+
+  } catch (e) {
+
+    console.error(e)
+
+  }
+
+}
 
 onMounted(() => {
 
+  fetchCategories()
   fetchDifficulties()
 
 })
@@ -127,6 +167,16 @@ onMounted(() => {
   ]"
   label="困難度"
   variant="outlined"
+/>
+
+<v-select
+  v-model="categoryId"
+  :items="categories"
+  item-title="name"
+  item-value="id"
+  label="カテゴリ"
+  variant="outlined"
+  clearable
 />
 
 <v-select
@@ -190,65 +240,75 @@ onMounted(() => {
   条件をクリア
 </v-btn>
 
-<p v-if="error">
-{{ error }}
+<p v-if="Object.keys(error).length">
+  {{ error }}
 </p>
 
+<div v-if="difficulties.length" class="mb-5">
 
-
-<div v-if="difficulties.length" class="mb-10">
-
-  <div
+  <v-card
     v-for="item in difficulties"
     :key="item.id"
+    class="mb-4 pa-4"
+    rounded="xl"
+    elevation="2"
+    :color="difficultyColor(item.severity)"
   >
+    <v-card-title>
+      {{ item.title }}
+    </v-card-title>
+
+    <v-card-subtitle v-if="item.category">
+      📂 {{ item.category.name }}
+    </v-card-subtitle>
+
+    <v-card-text>
+
+      <p>
+        <strong>状況：</strong>
+        {{ item.situation }}
+      </p>
 
 
-<h3>
-{{ item.title }}
-</h3>
+      <p v-if="item.feeling">
+        <strong>気持ち：</strong>
+        {{ item.feeling }}
+      </p>
 
 
-<p>
-状況:
-{{ item.situation }}
-</p>
+      <p>
+        <strong>困難度：</strong>
+
+        <span>
+          {{ '★'.repeat(item.severity) }}
+        </span>
+
+      </p>
 
 
-<p v-if="item.feeling">
-
-気持ち:
-{{ item.feeling }}
-
-</p>
+      <p>
+        <strong>発生日：</strong>
+        {{ formatDate(item.occurred_at) }}
+      </p>
 
 
-<p>
-困難度:
-
-<span>
-{{ '★'.repeat(item.severity) }}
-</span>
-
-</p>
+    </v-card-text>
 
 
-<p>
-発生日:
-{{ formatDate(item.occurred_at) }}
-</p>
+    <v-card-actions class="justify-center">
 
-<button
-  @click="showDifficulty(item.id)"
->
-  詳細
-</button>
+      <v-btn
+        color="primary"
+        variant="tonal"
+        @click="showDifficulty(item.id)"
+      >
+        詳細
+      </v-btn>
 
-<hr>
+    </v-card-actions>
 
 
-</div>
-
+  </v-card>
 
 </div>
 

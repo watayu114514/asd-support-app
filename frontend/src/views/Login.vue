@@ -13,7 +13,7 @@ const auth = useAuthStore()
 const email = ref('')
 const password = ref('')
 
-const error = ref('')
+const error = ref({})
 
 
 const login = async () => {

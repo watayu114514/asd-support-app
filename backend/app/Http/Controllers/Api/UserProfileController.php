@@ -37,7 +37,7 @@ class UserProfileController extends Controller
                 'string',
                 'max:100',
             ],
-            'asd_diagnosis' => [
+            'diagnosis_status' => [
                 'boolean',
             ],
             'diagnosis_date' => [
@@ -77,7 +77,7 @@ class UserProfileController extends Controller
                 'string',
                 'max:100',
             ],
-            'asd_diagnosis' => [
+            'diagnosis_status' => [
                 'boolean',
             ],
             'diagnosis_date' => [
@@ -90,7 +90,9 @@ class UserProfileController extends Controller
             ],
         ]);
 
-        $profile = $request->user()->profile;
+        $profile = $request->user()
+            ->profile()
+            ->firstOrCreate([]);
 
         if (!$profile) {
             return response()->json([

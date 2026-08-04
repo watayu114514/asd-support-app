@@ -5,7 +5,7 @@ import api from '../api/axios'
 
 
 const records = ref([])
-const error = ref('')
+const error = ref({})
 
 
 const fetchRecords = async () => {

@@ -45,6 +45,11 @@ const router = createRouter({
     },
 
     {
+      path:'/profile/edit',
+      component: () => import('../views/ProfileEdit.vue')
+    },
+
+    {
       path: '/difficulties',
       name: 'difficulties',
       component: Difficulties,
@@ -83,6 +88,13 @@ const router = createRouter({
       meta: {
         requiresAuth: true
       }
+    },
+
+    {
+      path: '/category-analysis',
+      name: 'CategoryAnalysis',
+      component: () =>
+        import('../views/CategoryAnalysis.vue')
     }
   ]
 })

@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\DifficultyRecordController;
 use App\Http\Controllers\DifficultyStatisticsController;
 use App\Http\Controllers\Api\IssueRecordController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CategoryAnalysisController;
 
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -15,6 +17,8 @@ Route::get('/user', [UserController::class, 'show'])
     ->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/categories', [CategoryController::class, 'index']);
 
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth:sanctum');
@@ -64,4 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
         '/issue-records/{id}',
         [IssueRecordController::class, 'destroy']
     );
+
+    Route::get(
+        '/category-analysis',
+        [CategoryAnalysisController::class, 'index']
+    );
+
 });
